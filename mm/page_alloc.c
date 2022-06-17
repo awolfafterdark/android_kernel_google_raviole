@@ -4476,12 +4476,13 @@ __perform_reclaim(gfp_t gfp_mask, unsigned int order,
 					const struct alloc_context *ac)
 {
 	unsigned int noreclaim_flag;
-	unsigned long progress;
+	unsigned long pflags, progress;
 
 	cond_resched();
 
 	/* We now go into synchronous reclaim */
 	cpuset_memory_pressure_bump();
+	psi_memstall_enter(&pflags);
 	fs_reclaim_acquire(gfp_mask);
 	noreclaim_flag = memalloc_noreclaim_save();
 
@@ -4490,6 +4491,7 @@ __perform_reclaim(gfp_t gfp_mask, unsigned int order,
 
 	memalloc_noreclaim_restore(noreclaim_flag);
 	fs_reclaim_release(gfp_mask);
+	psi_memstall_leave(&pflags);
 
 	cond_resched();
 
@@ -4503,14 +4505,11 @@ __alloc_pages_direct_reclaim(gfp_t gfp_mask, unsigned int order,
 		unsigned long *did_some_progress)
 {
 	struct page *page = NULL;
-	unsigned long pflags;
 	bool drained = false;
-	bool skip_pcp_drain = false;
 
-	psi_memstall_enter(&pflags);
 	*did_some_progress = __perform_reclaim(gfp_mask, order, ac);
 	if (unlikely(!(*did_some_progress)))
-		goto out;
+		return NULL;
 
 retry:
 	page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
@@ -4522,15 +4521,10 @@ retry:
 	 */
 	if (!page && !drained) {
 		unreserve_highatomic_pageblock(ac, false);
-		trace_android_vh_drain_all_pages_bypass(gfp_mask, order,
-			alloc_flags, ac->migratetype, *did_some_progress, &skip_pcp_drain);
-		if (!skip_pcp_drain)
-			drain_all_pages(NULL);
+		drain_all_pages(NULL);
 		drained = true;
 		goto retry;
 	}
-out:
-	psi_memstall_leave(&pflags);
 
 	return page;
 }
@@ -4784,7 +4778,7 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
 	int no_progress_loops;
 	unsigned int cpuset_mems_cookie;
 	int reserve_flags;
-
+	unsigned long alloc_start = jiffies;
 	/*
 	 * We also sanity check to catch abuse of atomic reserves being used by
 	 * callers that are not in atomic context.
@@ -5026,6 +5020,7 @@ fail:
 	warn_alloc(gfp_mask, ac->nodemask,
 			"page allocation failure: order:%u", order);
 got_pg:
+	trace_android_vh_alloc_pages_slowpath(gfp_mask, order, alloc_start);
 	return page;
 }
 

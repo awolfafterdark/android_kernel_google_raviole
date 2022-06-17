@@ -846,7 +846,7 @@ static void enter_power_mode(int cpu, struct power_mode *mode)
 		if (system_disabled)
 			return;
 
-		if (!is_acpm_ipc_flushed())
+		if (is_acpm_ipc_busy())
 			return;
 
 		if (unlikely(exynos_cpupm_notify(SICD_ENTER, 0)))

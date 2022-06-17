@@ -451,6 +451,8 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
 					  : SHRINK_BATCH;
 	long scanned = 0, next_deferred;
 
+	trace_android_vh_do_shrink_slab(shrinker, shrinkctl, priority);
+
 	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
 		nid = 0;
 
@@ -2083,7 +2085,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
 	unsigned nr_rotated = 0;
 	int file = is_file_lru(lru);
 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
-	bool bypass = false;
 
 	lru_add_drain();
 
@@ -2118,10 +2119,6 @@ static void shrink_active_list(unsigned long nr_to_scan,
 			}
 		}
 
-		trace_android_vh_page_referenced_check_bypass(page, nr_to_scan, lru, &bypass);
-		if (bypass)
-			goto skip_page_referenced;
-
 		if (page_referenced(page, 0, sc->target_mem_cgroup,
 				    &vm_flags)) {
 			/*
@@ -2139,7 +2136,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
 				continue;
 			}
 		}
-skip_page_referenced:
+
 		ClearPageActive(page);	/* we are de-activating */
 		SetPageWorkingset(page);
 		list_add(&page->lru, &l_inactive);
@@ -2450,7 +2447,7 @@ out:
 			cgroup_size = max(cgroup_size, protection);
 
 			scan = lruvec_size - lruvec_size * protection /
-				(cgroup_size + 1);
+				cgroup_size;
 
 			/*
 			 * Minimally target SWAP_CLUSTER_MAX pages to keep

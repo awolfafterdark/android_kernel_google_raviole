@@ -29,10 +29,6 @@ DECLARE_RESTRICTED_HOOK(android_rvh_do_sp_pc_abort,
 	TP_ARGS(regs, esr, addr, user),
 	TP_CONDITION(!user));
 
-DECLARE_HOOK(android_vh_handle_tlb_conf,
-	TP_PROTO(unsigned long addr, unsigned int esr, int *ret),
-	TP_ARGS(addr, esr, ret));
-
 /* macro versions of hooks are no longer required */
 
 #endif /* _TRACE_HOOK_FAULT_H */
