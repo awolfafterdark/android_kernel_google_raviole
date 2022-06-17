@@ -34,6 +34,8 @@
   arm64_const_caps_ready
   arm64_use_ng_mappings
   __arm_smccc_smc
+  argv_free
+  argv_split
   async_schedule_node_domain
   async_synchronize_full_domain
   atomic_notifier_call_chain
@@ -60,6 +62,7 @@
   bitmap_parse
   bitmap_parselist
   bitmap_print_to_pagebuf
+  __bitmap_shift_right
   bitmap_to_arr32
   __bitmap_weight
   blk_alloc_queue
@@ -234,6 +237,9 @@
   crc32_le
   crc8
   crc8_populate_msb
+  crc_ccitt
+  crc_itu_t
+  crc_itu_t_table
   crypto_aead_decrypt
   crypto_aead_encrypt
   crypto_aead_setauthsize
@@ -338,6 +344,7 @@
   device_wakeup_enable
   _dev_info
   __dev_kfree_skb_any
+  __dev_kfree_skb_irq
   devm_add_action
   __devm_alloc_percpu
   devm_backlight_device_register
@@ -702,6 +709,19 @@
   drm_writeback_connector_init
   drm_writeback_queue_job
   drm_writeback_signal_completion
+  dvb_ca_en50221_init
+  dvb_ca_en50221_release
+  dvb_dmx_init
+  dvb_dmx_release
+  dvb_dmx_swfilter
+  dvb_dmxdev_init
+  dvb_dmxdev_release
+  dvb_frontend_detach
+  dvb_frontend_sleep_until
+  dvb_register_adapter
+  dvb_register_frontend
+  dvb_unregister_adapter
+  dvb_unregister_frontend
   dump_backtrace
   dump_stack
   dwc3_send_gadget_ep_cmd
@@ -713,7 +733,10 @@
   dw_pcie_setup_rc
   dw_pcie_write
   __dynamic_dev_dbg
+  __dynamic_netdev_dbg
   __dynamic_pr_debug
+  eeprom_93cx6_multiread
+  eeprom_93cx6_read
   emergency_restart
   enable_irq
   enable_percpu_irq
@@ -733,6 +756,8 @@
   extcon_set_property_capability
   extcon_set_state_sync
   extcon_unregister_notifier
+  exynos_pd_tz_restore
+  exynos_pd_tz_save
   failure_tracking
   fasync_helper
   __fdget
@@ -748,6 +773,7 @@
   find_task_by_vpid
   find_vma
   finish_wait
+  firmware_request_cache
   flush_dcache_page
   flush_delayed_work
   flush_work
@@ -776,6 +802,7 @@
   generic_file_llseek
   generic_handle_irq
   generic_iommu_put_resv_regions
+  generic_rndis_bind
   genlmsg_multicast_allns
   genlmsg_put
   genl_register_family
@@ -931,6 +958,8 @@
   input_unregister_device
   input_unregister_handle
   input_unregister_handler
+  intlog10
+  intlog2
   int_sqrt
   iomem_resource
   iommu_alloc_resv_region
@@ -1089,8 +1118,13 @@
   kvfree
   kvfree_call_rcu
   kvmalloc_node
+  led_blink_set
   led_classdev_register_ext
+  led_classdev_resume
+  led_classdev_suspend
   led_classdev_unregister
+  led_set_brightness
+  led_trigger_blink_oneshot
   __list_add_valid
   __list_del_entry_valid
   list_sort
@@ -1369,6 +1403,9 @@
   pin_user_pages_fast
   pin_user_pages_remote
   pktgen_xfrm_outer_mode_output
+  pl330_dma_debug
+  pl330_dma_getposition
+  __pl330_prep_dma_cyclic
   platform_bus_type
   platform_device_add
   platform_device_add_data
@@ -1516,12 +1553,14 @@
   register_syscore_ops
   register_sysctl
   register_sysctl_table
+  register_tz_id_ignore_genl
   register_virtio_device
   register_virtio_driver
   regmap_async_complete
   regmap_bulk_read
   regmap_bulk_write
   regmap_get_device
+  __regmap_init_i2c
   regmap_irq_get_virq
   regmap_multi_reg_write
   regmap_multi_reg_write_bypassed
@@ -1581,6 +1620,12 @@
   __rht_bucket_nested
   rht_bucket_nested
   rht_bucket_nested_insert
+  rmw_priv_reg
+  rndis_command
+  rndis_rx_fixup
+  rndis_status
+  rndis_tx_fixup
+  rndis_unbind
   root_task_group
   round_jiffies
   round_jiffies_relative
@@ -1636,6 +1681,8 @@
   scsi_register_interface
   scsi_unblock_requests
   sdev_prefix_printk
+  secure_iova_alloc
+  secure_iova_free
   seq_hex_dump
   seq_lseek
   seq_open
@@ -1654,6 +1701,7 @@
   set_page_dirty
   set_page_dirty_lock
   __SetPageMovable
+  set_priv_reg
   sg_alloc_table
   sg_alloc_table_from_pages
   sg_free_table
@@ -1845,6 +1893,8 @@
   __sw_hweight32
   __sw_hweight64
   __sw_hweight8
+  __symbol_get
+  __symbol_put
   sync_file_create
   sync_file_get_fence
   synchronize_irq
@@ -1920,6 +1970,7 @@
   trace_event_raw_init
   trace_event_reg
   trace_handle_return
+  __traceiter_0
   __traceiter_android_rvh_cgroup_force_kthread_migration
   __traceiter_android_rvh_check_preempt_wakeup
   __traceiter_android_rvh_cpu_cgroup_online
@@ -1998,6 +2049,7 @@
   __traceiter_sched_util_est_se_tp
   __traceiter_suspend_resume
   trace_output_call
+  __tracepoint_0
   __tracepoint_android_rvh_cgroup_force_kthread_migration
   __tracepoint_android_rvh_check_preempt_wakeup
   __tracepoint_android_rvh_cpu_cgroup_online
@@ -2165,17 +2217,26 @@
   usb_hcd_platform_shutdown
   usb_hub_find_child
   usb_interface_id
+  usb_interrupt_msg
   usb_otg_state_string
   usb_put_function_instance
   usb_put_hcd
   usb_register_notify
   usb_remove_hcd
+  usb_reset_configuration
+  usb_reset_device
   usb_role_switch_get_drvdata
   usb_role_switch_register
   usb_role_switch_unregister
   usb_speed_string
   usb_string_id
+  usb_unlink_urb
+  usb_unpoison_anchored_urbs
   usb_unregister_notify
+  usb_wait_anchor_empty_timeout
+  usbnet_pause_rx
+  usbnet_purge_paused_rxq
+  usbnet_resume_rx
   __usecs_to_jiffies
   usleep_range
   v4l2_ctrl_handler_free
